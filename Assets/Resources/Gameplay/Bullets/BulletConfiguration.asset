@@ -16,4 +16,4 @@ MonoBehaviour:
   attackDelay: 0.3
   movementSpeed: 10
   lifetime: 3
-  attackStrength: 30
+  attackStrength: 35

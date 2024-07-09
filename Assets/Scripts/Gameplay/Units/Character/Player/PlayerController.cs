@@ -38,6 +38,7 @@ namespace Gameplay.Units.Character.Player
             View.SetConfiguration(_configuration);
             View.OnHit += ReceiveDamage;
             View.SetMovementBounds(_gameplayConfiguration.mapSize);
+            MonoService.OnUpdate += OnUpdate;
         }
 
         public override void Dispose()
@@ -56,6 +57,8 @@ namespace Gameplay.Units.Character.Player
 
         private void OnUpdate(float dt)
         {
+            if (_isDead) return;
+            
             View.OnUpdate(dt, _movementInput.GetDirection());
             View.LookAt(_aimInput.GetDirection());
         }
@@ -76,7 +79,6 @@ namespace Gameplay.Units.Character.Player
         public void Spawn()
         {
             _isDead = false;
-            MonoService.OnUpdate += OnUpdate;
             _health = View.Config.health;
             OnHealthUpdated?.Invoke(_health/ _configuration.health);
             View.transform.position = Vector3.zero;
@@ -87,7 +89,6 @@ namespace Gameplay.Units.Character.Player
         {
             _onDied?.Invoke();
             View.DieAnim();
-            MonoService.OnUpdate -= OnUpdate;
         }
     }
 }
