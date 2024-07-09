@@ -15,7 +15,7 @@ namespace Application
             _monoService.Initialize();
             _controllerFactory = new ControllerFactory(_monoService);
         
-            // I would make a FSM with states Login, Lobby, Gameplay.. and create all the controllers inside a corresponding state
+            // In real project I would make a FSM with states Login, Lobby, Gameplay.. and create all the controllers inside a corresponding state
             // so that after the game switched to another state, the controllers from the previous state would be disposed
 
             GameplayController gameplayController = _controllerFactory.CreateController<GameplayController>();
