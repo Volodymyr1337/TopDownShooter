@@ -1,6 +1,5 @@
 using System;
 using Gameplay.Units;
-using Gameplay.Units.Enemy;
 using UnityEngine;
 
 namespace Gameplay.Bullet

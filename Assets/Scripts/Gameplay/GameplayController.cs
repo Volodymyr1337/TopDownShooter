@@ -2,8 +2,8 @@ using Application;
 using Gameplay.Bullet;
 using Gameplay.Camera;
 using Gameplay.UI;
-using Gameplay.Units.Enemy;
-using Gameplay.Units.Player;
+using Gameplay.Units.Character.Enemy;
+using Gameplay.Units.Character.Player;
 using Input;
 using UnityEngine;
 

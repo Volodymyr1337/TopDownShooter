@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Application;
 using Gameplay.Units;
-using Gameplay.Units.Player;
 using Input;
 using UnityEngine;
 
@@ -10,13 +9,13 @@ namespace Gameplay.Bullet
     public class BulletPoolController : BaseController
     {
         private IInput _aimInput;
-        private IUnitPosition _playerPosition;
+        private ICharacterPosition _playerPosition;
         private float _delay = 0f;
         private bool _isPointerDown = false;
         private BulletConfiguration _bulletConfiguration;
         private Queue<BulletController> _bulletPool = new Queue<BulletController>();
 
-        public BulletPoolController(IInput aimInput, IUnitPosition playerPosition)
+        public BulletPoolController(IInput aimInput, ICharacterPosition playerPosition)
         {
             _aimInput = aimInput;
             _playerPosition = playerPosition;

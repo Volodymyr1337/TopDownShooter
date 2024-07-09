@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Gameplay.Units.Enemy
+namespace Gameplay.Units.Character.Enemy
 {
     [CreateAssetMenu]
     public class EnemyConfiguration : BaseUnitConfiguration

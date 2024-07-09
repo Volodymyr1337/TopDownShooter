@@ -3,16 +3,19 @@ using Application;
 using Input;
 using UnityEngine;
 
-namespace Gameplay.Units.Player
+namespace Gameplay.Units.Character.Player
 {
-    public class PlayerController : BaseViewController<PlayerView>, IUnitPosition
+    public class PlayerController : BaseViewController<PlayerView>, ICharacterPosition
     {
         private IInput _movementInput;
         private IInput _aimInput;
+        
         private float _health;
         private Action _onDied;
+        
         private bool _isDead = false;
-        public PlayerConfiguration Configuration { get; private set; }
+
+        private PlayerConfiguration _configuration;
         private GameplayConfiguration _gameplayConfiguration;
 
         public event Action<float> OnHealthUpdated;
@@ -31,8 +34,8 @@ namespace Gameplay.Units.Player
             base.Initialize();
             
             string configPath = "Gameplay/Player/PlayerConfiguration";
-            Configuration = Resources.Load<PlayerConfiguration>(configPath);
-            View.SetConfiguration(Configuration);
+            _configuration = Resources.Load<PlayerConfiguration>(configPath);
+            View.SetConfiguration(_configuration);
             View.OnHit += ReceiveDamage;
             View.SetMovementBounds(_gameplayConfiguration.mapSize);
         }
@@ -62,7 +65,7 @@ namespace Gameplay.Units.Player
             if (_isDead) return;
             
             _health -= damage;
-            OnHealthUpdated?.Invoke(_health/ Configuration.health);
+            OnHealthUpdated?.Invoke(_health/ _configuration.health);
             if (_health <= 0)
             {
                 _isDead = true;
@@ -75,7 +78,7 @@ namespace Gameplay.Units.Player
             _isDead = false;
             MonoService.OnUpdate += OnUpdate;
             _health = View.Config.health;
-            OnHealthUpdated?.Invoke(_health/ Configuration.health);
+            OnHealthUpdated?.Invoke(_health/ _configuration.health);
             View.transform.position = Vector3.zero;
             View.SpawnAnim();
         }

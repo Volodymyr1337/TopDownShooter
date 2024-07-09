@@ -6,12 +6,12 @@ namespace Gameplay.Camera
 {
     public class CameraController : BaseController
     {
-        private IUnitPosition _unitPosition;
+        private ICharacterPosition _characterPosition;
         private Transform _cameraTransform;
         
-        public CameraController(IUnitPosition playerPos)
+        public CameraController(ICharacterPosition playerPos)
         {
-            _unitPosition = playerPos;
+            _characterPosition = playerPos;
         }
         
         public override void Initialize()
@@ -29,7 +29,7 @@ namespace Gameplay.Camera
 
         private void OnUpdate(float data)
         {
-            Vector3 playerPos = _unitPosition.GetPosition();
+            Vector3 playerPos = _characterPosition.GetPosition();
             _cameraTransform.position = new Vector3(playerPos.x, playerPos.y, _cameraTransform.position.z);
         }
     }

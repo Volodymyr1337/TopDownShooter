@@ -6,7 +6,7 @@ using DG.Tweening;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Gameplay.Units.Enemy
+namespace Gameplay.Units.Character.Enemy
 {
     public class EnemyPoolController : BaseController
     {
@@ -15,10 +15,10 @@ namespace Gameplay.Units.Enemy
         private GameplayConfiguration _gameplayConfiguration;
         private List<EnemyConfiguration> _enemyConfigurations = new List<EnemyConfiguration>();
         private bool _isActive;
-        private IUnitPosition _playerPosition;
+        private ICharacterPosition _playerPosition;
         public event Action OnEnemyKilled;
         
-        public EnemyPoolController(GameplayConfiguration gameplayConfiguration, IUnitPosition playerPosition)
+        public EnemyPoolController(GameplayConfiguration gameplayConfiguration, ICharacterPosition playerPosition)
         {
             _gameplayConfiguration = gameplayConfiguration;
             _playerPosition = playerPosition;

@@ -2,18 +2,18 @@ using System;
 using Application;
 using UnityEngine;
 
-namespace Gameplay.Units.Enemy
+namespace Gameplay.Units.Character.Enemy
 {
-    public class EnemyController : BaseViewController<EnemyView>, IUnitPosition
+    public class EnemyController : BaseViewController<EnemyView>, ICharacterPosition
     {
         private EnemyConfiguration _configuration;
-        private IUnitPosition _target;
+        private ICharacterPosition _target;
         private float _health;
         private Action _onKilled;
         private Action<EnemyController> _onDieAnimCompleted;
         
         public EnemyController(string assetName, EnemyConfiguration config, 
-            IUnitPosition target, Action onKilled, Action<EnemyController> onDieAnimCompleted) : base(assetName)
+            ICharacterPosition target, Action onKilled, Action<EnemyController> onDieAnimCompleted) : base(assetName)
         {
             _configuration = config;
             _target = target;
@@ -25,7 +25,13 @@ namespace Gameplay.Units.Enemy
         {
             base.Initialize();
             View.SetConfiguration(_configuration);
-            View.Init(OnHit);
+            View.OnHit += OnHit;
+        }
+
+        public override void Dispose()
+        {
+            View.OnHit -= OnHit;
+            base.Dispose();
         }
 
         private void OnHit(float damage)
