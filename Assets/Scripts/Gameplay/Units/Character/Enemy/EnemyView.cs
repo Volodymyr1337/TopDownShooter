@@ -6,7 +6,6 @@ namespace Gameplay.Units.Character.Enemy
 {
     public class EnemyView : BaseCharacter<EnemyConfiguration>
     {
-        private float _originalSize;
         private Action<float> _onHit;
         private bool _isDealingDamage;
 
@@ -17,6 +16,11 @@ namespace Gameplay.Units.Character.Enemy
                 _isDealingDamage = true;
                 Attack(collision.GetComponent<IDamageable>());
             }
+        }
+
+        public void SetAvatar(Sprite avatar)
+        {
+            _image.sprite = avatar;
         }
 
         private void Attack(IDamageable player)
@@ -34,6 +38,11 @@ namespace Gameplay.Units.Character.Enemy
             {
                 _isDealingDamage = false;
             }
+        }
+
+        public void Stop()
+        {
+            _isDealingDamage = false;
         }
     }
 }

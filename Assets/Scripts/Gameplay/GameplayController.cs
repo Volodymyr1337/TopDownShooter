@@ -78,8 +78,10 @@ namespace Gameplay
         private void OnEnemyKilled()
         {
             _kills++;
+            if (_kills > _gameplayConfiguration.requiredKills) return;
+            
             _gameplayHUDController.UpdateKillCount(_kills);
-            if (_kills >= _gameplayConfiguration.requiredKills)
+            if (_kills == _gameplayConfiguration.requiredKills)
             {
                 OnGameOver();
             }

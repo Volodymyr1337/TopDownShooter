@@ -6,7 +6,7 @@ namespace Gameplay.Units.Character
 {
     public class BaseCharacter<TConfig> : BaseUnit<TConfig>, IDamageable where TConfig : BaseUnitConfiguration
     {
-        [SerializeField] private SpriteRenderer _image;
+        [SerializeField] protected SpriteRenderer _image;
         [SerializeField] private Gradient _gradient;
         [SerializeField] private float _hitAnimTime = 0.5f;
         [SerializeField] private float _spawnAnimTime = 0.4f;

@@ -14,6 +14,7 @@ namespace Gameplay.Units.Character.Player
         private Action _onDied;
         
         private bool _isDead = false;
+        private bool _isMoving = false;
 
         private PlayerConfiguration _configuration;
         private GameplayConfiguration _gameplayConfiguration;
@@ -24,8 +25,8 @@ namespace Gameplay.Units.Character.Player
             base("Gameplay/Player/PlayerView")
         {
             _movementInput = movementInput;
-            _gameplayConfiguration = gameplayConfiguration;
             _aimInput = aimInput;
+            _gameplayConfiguration = gameplayConfiguration;
             _onDied = onDied;
         }
 
@@ -39,6 +40,8 @@ namespace Gameplay.Units.Character.Player
             View.OnHit += ReceiveDamage;
             View.SetMovementBounds(_gameplayConfiguration.mapSize);
             MonoService.OnUpdate += OnUpdate;
+            _movementInput.OnPressed += OnStartMoving;
+            _movementInput.OnReleased += OnStopMoving;
         }
 
         public override void Dispose()
@@ -47,7 +50,19 @@ namespace Gameplay.Units.Character.Player
             if (MonoService != null)
                 MonoService.OnUpdate -= OnUpdate;
 
+            _movementInput.OnPressed -= OnStartMoving;
+            _movementInput.OnReleased -= OnStopMoving;
             base.Dispose();
+        }
+
+        private void OnStartMoving()
+        {
+            _isMoving = true;
+        }
+        
+        private void OnStopMoving()
+        {
+            _isMoving = false;
         }
 
         public Vector3 GetPosition()
@@ -59,7 +74,9 @@ namespace Gameplay.Units.Character.Player
         {
             if (_isDead) return;
             
-            View.OnUpdate(dt, _movementInput.GetDirection());
+            if (_isMoving)
+                View.OnUpdate(dt, _movementInput.GetDirection());
+            
             View.LookAt(_aimInput.GetDirection());
         }
 

@@ -77,6 +77,7 @@ namespace Gameplay.Units.Character.Enemy
             }
             int randomIndex = Random.Range(0, enemyPoolCount);
             var enemyController = _enemyPool[randomIndex];
+            enemyController.SetConfig(GetRandomEnemyConfiguration());
             enemyController.Spawn(GetRandomPosition());
             _enemyPool.RemoveAt(randomIndex);
             _activeEnemyControllers.Add(enemyController);
@@ -84,13 +85,17 @@ namespace Gameplay.Units.Character.Enemy
 
         private EnemyController CreateRandomEnemy()
         {
-            int randomIndex = Random.Range(0, _enemyConfigurations.Count);
-            
             EnemyController enemyController = CreateController(new EnemyController(_gameplayConfiguration.enemyAssetName, 
-                _enemyConfigurations[randomIndex], _playerPosition, OnKilled, OnDieAnimCompleted));
+                _playerPosition, OnKilled, OnDieAnimCompleted));
             
             enemyController.Initialize();
             return enemyController;
+        }
+
+        private EnemyConfiguration GetRandomEnemyConfiguration()
+        {
+            int randomIndex = Random.Range(0, _enemyConfigurations.Count);
+            return _enemyConfigurations[randomIndex];
         }
 
         private void OnKilled()

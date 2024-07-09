@@ -18,20 +18,31 @@ namespace Input
         {
             base.Initialize();
             
-            View.joystick.OnPressed += OnPressed;
-            View.joystick.OnReleased += OnReleased;
+            View.joystick.OnPressed += OnJoystickPressed;
+            View.joystick.OnReleased += OnJoystickReleased;
         }
 
         public override void Dispose()
         {
-            View.joystick.OnPressed -= OnPressed;
-            View.joystick.OnReleased -= OnReleased;
+            View.joystick.OnPressed -= OnJoystickPressed;
+            View.joystick.OnReleased -= OnJoystickReleased;
+            
             base.Dispose();
         }
 
         public Vector2 GetDirection()
         {
             return View.joystick.Direction;
+        }
+
+        private void OnJoystickPressed()
+        {
+            OnPressed?.Invoke();
+        }
+
+        private void OnJoystickReleased()
+        {
+            OnReleased?.Invoke();;
         }
 
         public void Release()

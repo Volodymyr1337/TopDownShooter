@@ -16,3 +16,4 @@ MonoBehaviour:
   attackDelay: 0.4
   movementSpeed: 3.5
   attackStrength: 5
+  avatar: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}

@@ -12,20 +12,24 @@ namespace Gameplay.Units.Character.Enemy
         private Action _onKilled;
         private Action<EnemyController> _onDieAnimCompleted;
         
-        public EnemyController(string assetName, EnemyConfiguration config, 
-            ICharacterPosition target, Action onKilled, Action<EnemyController> onDieAnimCompleted) : base(assetName)
+        public EnemyController(string assetName, ICharacterPosition target, Action onKilled, Action<EnemyController> onDieAnimCompleted) : base(assetName)
         {
-            _configuration = config;
             _target = target;
             _onKilled = onKilled;
             _onDieAnimCompleted = onDieAnimCompleted;
         }
-
+        
         public override void Initialize()
         {
             base.Initialize();
-            View.SetConfiguration(_configuration);
             View.OnHit += OnHit;
+        }
+        
+        public void SetConfig(EnemyConfiguration config)
+        {
+            _configuration = config;
+            View.SetConfiguration(config);
+            View.SetAvatar(_configuration.avatar);
         }
 
         public override void Dispose()
@@ -94,6 +98,7 @@ namespace Gameplay.Units.Character.Enemy
         public void Stop()
         {
             MonoService.OnUpdate -= OnUpdate;
+            View.Stop();
         }
     }
 }

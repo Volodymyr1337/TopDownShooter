@@ -6,5 +6,6 @@ namespace Gameplay.Units.Character.Enemy
     public class EnemyConfiguration : BaseUnitConfiguration
     {
         public float attackStrength;
+        public Sprite avatar;
     }
 }
