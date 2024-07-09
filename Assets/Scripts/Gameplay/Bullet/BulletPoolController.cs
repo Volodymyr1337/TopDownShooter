@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Application;
+using Gameplay.Units;
 using Gameplay.Units.Player;
 using Input;
 using UnityEngine;
@@ -9,22 +10,23 @@ namespace Gameplay.Bullet
     public class BulletPoolController : BaseController
     {
         private IInput _aimInput;
-        private PlayerController _playerController;
+        private IUnitPosition _playerPosition;
         private float _delay = 0f;
         private bool _isPointerDown = false;
         private BulletConfiguration _bulletConfiguration;
         private Queue<BulletController> _bulletPool = new Queue<BulletController>();
 
-        public BulletPoolController(IInput aimInput, PlayerController playerController)
+        public BulletPoolController(IInput aimInput, IUnitPosition playerPosition)
         {
             _aimInput = aimInput;
-            _playerController = playerController;
+            _playerPosition = playerPosition;
         }
         
         public override void Initialize()
         {
             _aimInput.OnPressed += OnPressed;
             _aimInput.OnReleased += OnReleased;
+            MonoService.OnUpdate += OnUpdate;
             
             string configPath = "Gameplay/Bullets/BulletConfiguration";
             _bulletConfiguration = Resources.Load<BulletConfiguration>(configPath);
@@ -34,22 +36,24 @@ namespace Gameplay.Bullet
         {
             _aimInput.OnPressed -= OnPressed;
             _aimInput.OnReleased -= OnReleased;
+            MonoService.OnUpdate -= OnUpdate;
             
             base.Dispose();
         }
 
         private void OnReleased()
         {
-            MonoService.OnUpdate -= OnUpdate;
             _isPointerDown = false;
         }
 
         private void OnUpdate(float dt)
         {
+            if (!_isPointerDown) return;
+            
             if (_delay <= 0f)
             {
                 SpawnBullet();
-                _delay = _playerController.Configuration.attackDelay;
+                _delay = _bulletConfiguration.attackDelay;
             }
             
             _delay -= dt;
@@ -58,7 +62,6 @@ namespace Gameplay.Bullet
         private void OnPressed()
         {
             _isPointerDown = true;
-            MonoService.OnUpdate += OnUpdate;
         }
 
         private void SpawnBullet()
@@ -76,7 +79,7 @@ namespace Gameplay.Bullet
                 bullet = _bulletPool.Dequeue();
             }
             
-            bullet.Spawn(_playerController.GetPosition(), _aimInput.GetDirection());
+            bullet.Spawn(_playerPosition.GetPosition(), _aimInput.GetDirection());
         }
 
         private void OnDespawnBullet(BulletController bullet)
