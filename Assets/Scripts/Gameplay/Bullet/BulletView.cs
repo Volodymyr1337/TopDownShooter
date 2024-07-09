@@ -20,7 +20,7 @@ namespace Gameplay.Bullet
         {
             if (col.gameObject.CompareTag("Enemy"))
             {
-                col.gameObject.GetComponent<EnemyView>().Hit(Config.attackStrength);
+                col.gameObject.GetComponent<IDamageable>().TakeDamage(Config.attackStrength);
                 _onHit?.Invoke();
             }
         }

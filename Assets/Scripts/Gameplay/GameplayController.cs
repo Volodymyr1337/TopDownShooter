@@ -1,5 +1,6 @@
 using Application;
 using Gameplay.Bullet;
+using Gameplay.Camera;
 using Gameplay.UI;
 using Gameplay.Units.Enemy;
 using Gameplay.Units.Player;
@@ -15,25 +16,31 @@ namespace Gameplay
         private PlayerController _playerController;
         private GameplayHUDController _gameplayHUDController;
         private GameplayConfiguration _gameplayConfiguration;
+        private JoystickController _movementJoystick;
+        private JoystickController _aimJoystick;
+        private int _kills;
+        
         public override void Initialize()
         {
             _gameplayConfiguration = Resources.Load<GameplayConfiguration>("Gameplay/GameplayConfiguration");
             
-            JoystickController movementJoystick = CreateController(new JoystickController("UI/MovementJoystick"));
-            JoystickController aimJoystick = CreateController(new JoystickController("UI/AimJoystick"));
-            _playerController = CreateController(new PlayerController(movementJoystick, aimJoystick, OnPlayerKilled));
+            _movementJoystick = CreateController(new JoystickController("UI/MovementJoystick"));
+            _aimJoystick = CreateController(new JoystickController("UI/AimJoystick"));
+            _playerController = CreateController(new PlayerController(_movementJoystick, _aimJoystick, _gameplayConfiguration, OnGameOver));
             _enemyPoolController = CreateController(new EnemyPoolController(_gameplayConfiguration, _playerController));
-            _bulletPoolController = CreateController(new BulletPoolController(aimJoystick, _playerController));
+            _bulletPoolController = CreateController(new BulletPoolController(_aimJoystick, _playerController));
             _gameplayHUDController = CreateController(new GameplayHUDController());
+            CameraController cameraController = CreateController(new CameraController(_playerController));
             _enemyPoolController.OnEnemyKilled += OnEnemyKilled;
             _playerController.OnHealthUpdated += OnHealthUpdated;
             
             _gameplayHUDController.Initialize();
             _bulletPoolController.Initialize();
             _enemyPoolController.Initialize();
-            movementJoystick.Initialize();
-            aimJoystick.Initialize();
+            _movementJoystick.Initialize();
+            _aimJoystick.Initialize();
             _playerController.Initialize();
+            cameraController.Initialize();
             Start();
         }
 
@@ -44,11 +51,13 @@ namespace Gameplay
             base.Dispose();
         }
 
-        private void OnPlayerKilled()
+        private void OnGameOver()
         {
             _enemyPoolController.Active(false);
             GameOverScreenController gameOverScreenController = CreateController(new GameOverScreenController(OnRestartBtnClick));
             gameOverScreenController.Initialize();
+            _movementJoystick.Release();
+            _aimJoystick.Release();
         }
 
         private void OnRestartBtnClick()
@@ -59,18 +68,20 @@ namespace Gameplay
 
         private void Start()
         {
-            _gameplayHUDController.UpdateKillCount(0);
+            _kills = 0;
+            _gameplayHUDController.UpdateKillCount(_kills);
             _playerController.Spawn();
             _enemyPoolController.Active(true);
         }
         
         
-        private void OnEnemyKilled(int kills)
+        private void OnEnemyKilled()
         {
-            _gameplayHUDController.UpdateKillCount(kills);
-            if (kills >= _gameplayConfiguration.requiredKills)
+            _kills++;
+            _gameplayHUDController.UpdateKillCount(_kills);
+            if (_kills >= _gameplayConfiguration.requiredKills)
             {
-                OnPlayerKilled();
+                OnGameOver();
             }
         }
 

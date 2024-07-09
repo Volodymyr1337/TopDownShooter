@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Application;
 using DG.Tweening;
-using Gameplay.Units.Player;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -16,14 +15,13 @@ namespace Gameplay.Units.Enemy
         private GameplayConfiguration _gameplayConfiguration;
         private List<EnemyConfiguration> _enemyConfigurations = new List<EnemyConfiguration>();
         private bool _isActive;
-        private PlayerController _playerController;
-        public event Action<int> OnEnemyKilled;
-        private int _killCount;
+        private IUnitPosition _playerPosition;
+        public event Action OnEnemyKilled;
         
-        public EnemyPoolController(GameplayConfiguration gameplayConfiguration, PlayerController playerController)
+        public EnemyPoolController(GameplayConfiguration gameplayConfiguration, IUnitPosition playerPosition)
         {
             _gameplayConfiguration = gameplayConfiguration;
-            _playerController = playerController;
+            _playerPosition = playerPosition;
         }
         
         public override void Initialize()
@@ -56,7 +54,6 @@ namespace Gameplay.Units.Enemy
 
         private void SpawnEnemies()
         {
-            _killCount = 0;
             if (_isActive && _activeEnemyControllers.Count <= _gameplayConfiguration.maxEnemiesOnMap)
             {
                 SpawnEnemy();
@@ -90,18 +87,21 @@ namespace Gameplay.Units.Enemy
             int randomIndex = Random.Range(0, _enemyConfigurations.Count);
             
             EnemyController enemyController = CreateController(new EnemyController(_gameplayConfiguration.enemyAssetName, 
-                _enemyConfigurations[randomIndex], _playerController, OnKilled));
+                _enemyConfigurations[randomIndex], _playerPosition, OnKilled, OnDieAnimCompleted));
             
             enemyController.Initialize();
             return enemyController;
         }
 
-        private void OnKilled(EnemyController controller)
+        private void OnKilled()
         {
-            _killCount++;
+            OnEnemyKilled?.Invoke();
+        }
+        
+        private void OnDieAnimCompleted(EnemyController controller)
+        {
             _activeEnemyControllers.Remove(controller);
             _enemyPool.Add(controller);
-            OnEnemyKilled?.Invoke(_killCount);
         }
 
         private void StopEnemies()
@@ -114,30 +114,29 @@ namespace Gameplay.Units.Enemy
         
         private Vector3 GetRandomPosition()
         {
-            int maxAttempts = 100;
+            int maxAttempts = 10000;
             int attempts = 0;
             Vector3 position = Vector3.zero;
             do
             {
                 float x = Random.Range(-_gameplayConfiguration.mapSize.x / 2, _gameplayConfiguration.mapSize.x / 2);
-                float z = Random.Range(-_gameplayConfiguration.mapSize.y / 2, _gameplayConfiguration.mapSize.y / 2);
-                position = new Vector3(x, 0, z);
+                float y = Random.Range(-_gameplayConfiguration.mapSize.y / 2, _gameplayConfiguration.mapSize.y / 2);
+                position = new Vector3(x, y, 0);
                 attempts++;
             } while (!IsValidPosition(position) && attempts < maxAttempts);
-
             return position;
         }
 
         private bool IsValidPosition(Vector3 position)
         {
-            if (Vector3.Distance(position, _playerController.GetPosition()) < _gameplayConfiguration.minSpawnDistance)
+            if (Vector3.Distance(position, _playerPosition.GetPosition()) < _gameplayConfiguration.minSpawnDistance)
             {
                 return false;
             }
 
             foreach (EnemyController enemy in _activeEnemyControllers)
             {
-                if (Vector3.Distance(position, enemy.GetPosition()) < enemy.GetUnitRadius())
+                if (Vector3.Distance(position, enemy.GetPosition()) < enemy.GetUnitSize())
                 {
                     return false;
                 }

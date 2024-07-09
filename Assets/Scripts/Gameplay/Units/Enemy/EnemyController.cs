@@ -1,24 +1,24 @@
 using System;
 using Application;
-using Gameplay.Units.Player;
 using UnityEngine;
 
 namespace Gameplay.Units.Enemy
 {
-    public class EnemyController : BaseViewController<EnemyView>
+    public class EnemyController : BaseViewController<EnemyView>, IUnitPosition
     {
         private EnemyConfiguration _configuration;
-        private PlayerController _playerController;
-        private float _atkDelay = 0f;
+        private IUnitPosition _target;
         private float _health;
-        private Action<EnemyController> _onKilled;
+        private Action _onKilled;
+        private Action<EnemyController> _onDieAnimCompleted;
         
         public EnemyController(string assetName, EnemyConfiguration config, 
-            PlayerController playerController, Action<EnemyController> onKilled) : base(assetName)
+            IUnitPosition target, Action onKilled, Action<EnemyController> onDieAnimCompleted) : base(assetName)
         {
             _configuration = config;
-            _playerController = playerController;
+            _target = target;
             _onKilled = onKilled;
+            _onDieAnimCompleted = onDieAnimCompleted;
         }
 
         public override void Initialize()
@@ -30,6 +30,8 @@ namespace Gameplay.Units.Enemy
 
         private void OnHit(float damage)
         {
+            if (_health < 0) return;
+            
             _health -= damage;
             if (_health <= 0f)
             {
@@ -42,9 +44,9 @@ namespace Gameplay.Units.Enemy
             return View.transform.position;
         }
         
-        public float GetUnitRadius()
+        public float GetUnitSize()
         {
-            return View.transform.localScale.x / 2f;
+            return View.transform.localScale.x * 0.1f;
         }
 
         public void Spawn(Vector3 position)
@@ -62,41 +64,30 @@ namespace Gameplay.Units.Enemy
 
         private void OnUpdate(float dt)
         {
-            Vector3 direction = _playerController.GetPosition() - View.transform.position;
+            Vector3 direction = _target.GetPosition() - View.transform.position;
+            if (Vector3.Distance(_target.GetPosition(), View.transform.position) < GetUnitSize())
+                return;
+            
             View.OnUpdate(dt, direction.normalized);
             View.LookAt(direction.normalized);
-            Attack(dt);
         }
 
         private void Die()
         {
             Stop();
             View.DieAnim(OnDieAnimCompleted);
+            _onKilled?.Invoke();
         }
 
         public void OnDieAnimCompleted()
         {
-            _onKilled?.Invoke(this);
             View.gameObject.SetActive(false);
+            _onDieAnimCompleted?.Invoke(this);
         }
 
         public void Stop()
         {
             MonoService.OnUpdate -= OnUpdate;
-        }
-
-        private void Attack(float dt)
-        {
-            float distance = Vector3.Distance(_playerController.GetPosition(), View.transform.position);
-            if (distance < _configuration.attackRange && _atkDelay <= 0)
-            {
-                _playerController.ReceiveDamage(_configuration.attackStrength);
-                _atkDelay = _configuration.attackDelay;
-            }
-            else if (_atkDelay > 0)
-            {
-                _atkDelay -= dt;
-            }
         }
     }
 }

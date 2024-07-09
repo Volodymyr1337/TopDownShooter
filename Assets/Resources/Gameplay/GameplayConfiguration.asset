@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: GameplayConfiguration
   m_EditorClassIdentifier: 
   enemyAssetName: Gameplay/Enemies/EnemyView
-  enemySpawnDelay: 1.5
+  enemySpawnDelay: 3
   maxEnemiesOnMap: 10
-  minSpawnDistance: 20
-  mapSize: {x: 20, y: 20}
+  minSpawnDistance: 6
+  requiredKills: 10
+  mapSize: {x: 28, y: 28}

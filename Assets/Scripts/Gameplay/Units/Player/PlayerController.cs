@@ -5,20 +5,24 @@ using UnityEngine;
 
 namespace Gameplay.Units.Player
 {
-    public class PlayerController : BaseViewController<PlayerView>
+    public class PlayerController : BaseViewController<PlayerView>, IUnitPosition
     {
-        private JoystickController _movementJoystick;
-        private JoystickController _aimJoystick;
+        private IInput _movementInput;
+        private IInput _aimInput;
         private float _health;
         private Action _onDied;
         private bool _isDead = false;
         public PlayerConfiguration Configuration { get; private set; }
+        private GameplayConfiguration _gameplayConfiguration;
+
         public event Action<float> OnHealthUpdated;
         
-        public PlayerController(JoystickController movementJoystick, JoystickController aimJoystick, Action onDied) : base("Gameplay/Player/PlayerView")
+        public PlayerController(IInput movementInput, IInput aimInput, GameplayConfiguration gameplayConfiguration, Action onDied) :
+            base("Gameplay/Player/PlayerView")
         {
-            _movementJoystick = movementJoystick;
-            _aimJoystick = aimJoystick;
+            _movementInput = movementInput;
+            _gameplayConfiguration = gameplayConfiguration;
+            _aimInput = aimInput;
             _onDied = onDied;
         }
 
@@ -29,10 +33,13 @@ namespace Gameplay.Units.Player
             string configPath = "Gameplay/Player/PlayerConfiguration";
             Configuration = Resources.Load<PlayerConfiguration>(configPath);
             View.SetConfiguration(Configuration);
+            View.OnHit += ReceiveDamage;
+            View.SetMovementBounds(_gameplayConfiguration.mapSize);
         }
 
         public override void Dispose()
         {
+            View.OnHit -= ReceiveDamage;
             if (MonoService != null)
                 MonoService.OnUpdate -= OnUpdate;
 
@@ -46,11 +53,11 @@ namespace Gameplay.Units.Player
 
         private void OnUpdate(float dt)
         {
-            View.OnUpdate(dt, _movementJoystick.GetDirection());
-            View.LookAt(_aimJoystick.GetDirection());
+            View.OnUpdate(dt, _movementInput.GetDirection());
+            View.LookAt(_aimInput.GetDirection());
         }
 
-        public void ReceiveDamage(float damage)
+        private void ReceiveDamage(float damage)
         {
             if (_isDead) return;
             

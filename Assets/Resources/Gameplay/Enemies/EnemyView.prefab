@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 8503729808872066444}
   - component: {fileID: 5378209541415985905}
   - component: {fileID: 6291843424548875529}
-  - component: {fileID: 2090860285717144545}
   - component: {fileID: 4519175126581566349}
+  - component: {fileID: 2090860285717144545}
   m_Layer: 0
   m_Name: EnemyView
   m_TagString: Enemy
@@ -76,7 +76,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 2032716939
   m_SortingLayer: 2
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   m_Color: {r: 1, g: 0.72552764, b: 0.7122642, a: 1}
   m_FlipX: 0
@@ -123,18 +123,6 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.1
---- !u!114 &2090860285717144545
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2433660751018015507}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35ac22a5c4324bbdb409352e03e15640, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!50 &4519175126581566349
 Rigidbody2D:
   serializedVersion: 4
@@ -162,6 +150,50 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &2090860285717144545
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2433660751018015507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35ac22a5c4324bbdb409352e03e15640, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _image: {fileID: 5378209541415985905}
+  _gradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 0.7254902, b: 0.7137255, a: 1}
+    key1: {r: 1, g: 0.04109589, b: 0, a: 1}
+    key2: {r: 1, g: 0.7254902, b: 0.7137255, a: 1}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 32768
+    ctime2: 65535
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 31033
+    atime2: 65535
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 3
+    m_NumAlphaKeys: 3
+  _hitAnimTime: 0.2
 --- !u!1 &4780796444787705070
 GameObject:
   m_ObjectHideFlags: 0
@@ -234,7 +266,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 2032716939
   m_SortingLayer: 2
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   m_Color: {r: 1, g: 0.7254902, b: 0.7137255, a: 1}
   m_FlipX: 0

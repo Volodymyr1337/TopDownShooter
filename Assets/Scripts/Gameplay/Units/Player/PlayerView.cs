@@ -4,9 +4,10 @@ using UnityEngine;
 
 namespace Gameplay.Units.Player
 {
-    public class PlayerView : BaseUnit<PlayerConfiguration>
+    public class PlayerView : BaseUnit<PlayerConfiguration>, IDamageable
     {
         private float _originalSize = 1f;
+        public event Action<float> OnHit;
 
         private void Awake()
         {
@@ -23,9 +24,9 @@ namespace Gameplay.Units.Player
             transform.DOScale(0, .5f).From(_originalSize);
         }
 
-        public void HitAnim()
+        public void TakeDamage(float damage)
         {
-            // display hit anim
+            OnHit?.Invoke(damage);
         }
     }
 }
